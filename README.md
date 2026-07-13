@@ -1,14 +1,13 @@
-# Harness-Studio
+# Harness Studio
 
-> Build once. Reuse forever.
+Your AI Workspace.
 
-**My Harness Library**는 AI와 함께 작업하는 과정에서 만들어지는 **프롬프트, 프로젝트 하네스, 워크플로, 체크리스트, 지식을 하나의 작업 공간에서 관리하기 위한 개인 AI Workspace**입니다.
+Build once.
+Reuse forever.
 
-단순한 프롬프트 저장소가 아니라,
+Harness Studio는 프롬프트를 저장하는 곳이 아닙니다.
 
-**생각 → 구현 → 배포 → 개선**
-
-이라는 전체 작업 흐름(Harness)을 관리하는 것을 목표로 합니다.
+AI와 함께 만드는 모든 프로젝트의 Workflow, Prompt, Knowledge, Assets를 하나의 작업 공간에서 관리하는 AI Workspace입니다.
 
 ---
 
