@@ -12,3 +12,4 @@ yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
 qa-*.png
+.edge-qa-profile*/

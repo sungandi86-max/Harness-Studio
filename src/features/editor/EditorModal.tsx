@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button"
 import { Field, TextInput } from "@/components/ui/Field"
 import type { EditorMode } from "@/features/app/types"
 import type { Asset, KnowledgeItem, Project, Prompt, Workflow } from "@/types/models"
-import { AiFields, AssetFields, KnowledgeFields, ProjectFields, PromptFields, RuleFields, WorkflowFields } from "./EditorFields"
+import { AiFields, AssetFields, DocumentFields, KnowledgeFields, ProjectFields, PromptFields, RuleFields, WorkflowFields } from "./EditorFields"
 import { payloadFromForm } from "./editorPayload"
 import type { EditorDefaults, SubmitPayload } from "./editorTypes"
 
@@ -58,6 +58,7 @@ export function EditorModal({
           {activeMode.kind === "workflow" ? <WorkflowFields workflow={defaults.workflow} /> : null}
           {activeMode.kind === "knowledge" ? <KnowledgeFields item={defaults.knowledge} /> : null}
           {activeMode.kind === "asset" ? <AssetFields asset={defaults.asset} /> : null}
+          {activeMode.kind === "document" ? <DocumentFields document={defaults.document} /> : null}
           {activeMode.kind === "nextStep" ? <Field label="다음 작업 제목"><TextInput name="title" required placeholder="예: 모바일 레이아웃 점검" /></Field> : null}
           {activeMode.kind === "aiTeam" ? <AiFields /> : null}
           {activeMode.kind === "rule" ? <RuleFields /> : null}
@@ -78,6 +79,7 @@ function titleForMode(mode: EditorMode): string {
     case "workflow": return mode.id ? "워크플로 수정" : "새 워크플로"
     case "knowledge": return mode.id ? "지식 수정" : "새 지식 기록"
     case "asset": return mode.id ? "자료 수정" : "새 자료"
+    case "document": return mode.id ? "문서 수정" : "새 문서"
     case "nextStep": return "다음 작업 추가"
     case "aiTeam": return "AI 역할 추가"
     case "rule": return "작업 규칙 추가"
@@ -90,6 +92,10 @@ function findDefaults(mode: EditorMode, projects: readonly Project[], prompts: r
     prompt: mode.kind === "prompt" && mode.id ? prompts.find((item) => item.id === mode.id) : undefined,
     workflow: mode.kind === "workflow" && mode.id ? workflows.find((item) => item.id === mode.id) : undefined,
     knowledge: mode.kind === "knowledge" && mode.id ? knowledge.find((item) => item.id === mode.id) : undefined,
-    asset: mode.kind === "asset" && mode.id ? assets.find((item) => item.id === mode.id) : undefined
+    asset: mode.kind === "asset" && mode.id ? assets.find((item) => item.id === mode.id) : undefined,
+    document:
+      mode.kind === "document" && mode.id
+        ? projects.find((project) => project.id === mode.projectId)?.docs.find((document) => document.id === mode.id)
+        : undefined
   }
 }

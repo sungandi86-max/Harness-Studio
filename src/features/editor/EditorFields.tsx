@@ -83,6 +83,42 @@ export function AssetFields({ asset }: { readonly asset: Asset | undefined }) {
   )
 }
 
+export function DocumentFields({ document }: { readonly document: Project["docs"][number] | undefined }) {
+  return (
+    <>
+      <Field label="문서 제목"><TextInput name="title" required defaultValue={document?.title} /></Field>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Field label="파일명"><TextInput name="fileName" required defaultValue={document?.fileName ?? "README.md"} /></Field>
+        <Field label="문서 유형">
+          <SelectInput name="documentType" defaultValue={document?.documentType ?? "README"}>
+            <option value="README">README</option>
+            <option value="PROJECT">PROJECT</option>
+            <option value="ARCHITECTURE">ARCHITECTURE</option>
+            <option value="CODEX">CODEX</option>
+            <option value="NEXT">NEXT</option>
+            <option value="SECURITY">SECURITY</option>
+            <option value="DATA_MODEL">DATA_MODEL</option>
+            <option value="ROADMAP">ROADMAP</option>
+            <option value="CUSTOM">CUSTOM</option>
+          </SelectInput>
+        </Field>
+        <Field label="버전"><TextInput name="version" required defaultValue={document?.version ?? "1.0.0"} /></Field>
+      </div>
+      <Field label="목적"><TextInput name="purpose" required defaultValue={document?.purpose} /></Field>
+      <Field label="Markdown 내용"><TextArea name="content" required className="min-h-72 font-mono" defaultValue={document?.content} /></Field>
+      <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.035] p-3 text-sm text-slate-200">
+        <input
+          name="includeInAiContext"
+          type="checkbox"
+          defaultChecked={document?.includeInAiContext ?? true}
+          className="h-4 w-4 accent-mint-300"
+        />
+        AI 작업 시작 컨텍스트에 포함
+      </label>
+    </>
+  )
+}
+
 export function AiFields() {
   return (
     <>

@@ -30,6 +30,7 @@ type WorkspaceData = {
 - `KnowledgeItem`: notes, decisions, lessons, errors, tips, references, and snippets.
 - `Asset`: URL-based asset records for images, documents, PDFs, links, brand assets, characters, references, and code.
 - `Activity`: simple event log for create, update, prompt use, next step completion, workflow progress, and deletion.
+- `ProjectDocument`: Markdown project docs with filename, type, purpose, version, and AI-context inclusion flag.
 - `AppSettings`: user name, storage version, and export metadata.
 
 ## localStorage Key
@@ -41,6 +42,7 @@ harness-studio.workspace.v1
 ## Repositories
 
 - `projectRepository`
+- `projectDocumentRepository`
 - `promptRepository`
 - `workflowRepository`
 - `knowledgeRepository`
@@ -65,5 +67,6 @@ The current object arrays can map to tables:
 - `project_rules`
 - `project_next_steps`
 - `project_ai_team_members`
+- `project_documents`
 
 Join tables can replace the current ID arrays when cloud sync is introduced.

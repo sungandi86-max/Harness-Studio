@@ -16,6 +16,7 @@ The core goal is to turn repeated project context and working habits into reusab
 - Workspace Home with next projects, next steps, favorite prompts, recent workflows, activity, and stats
 - Project list with search, filters, sorting, favorites, progress, links, and CRUD
 - Project Harness detail with Overview, Next Steps, AI Team, Workflow, Prompts, Knowledge, Assets, Rules, and Activity
+- Project Harness Docs with Markdown create/edit/copy/download and AI start context composition
 - Prompt Library with copy, favorite, edit, delete, duplicate, and use count
 - Workflow Library with reusable steps and execution mode
 - Knowledge Library for notes, decisions, lessons, errors, tips, references, and snippets

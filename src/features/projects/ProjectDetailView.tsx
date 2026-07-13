@@ -7,8 +7,10 @@ import { Card, SectionTitle } from "@/components/ui/Card"
 import { formatShortDate } from "@/lib/utils/date"
 import type { EditorMode } from "@/features/app/types"
 import type { Activity, Asset, KnowledgeItem, Project, Prompt, Workflow } from "@/types/models"
+import { DocsPanel } from "./DocsPanel"
+import { ProjectMiniCards } from "./ProjectMiniCards"
 
-type DetailTab = "overview" | "next" | "team" | "workflow" | "prompts" | "knowledge" | "assets" | "rules" | "activity"
+type DetailTab = "overview" | "next" | "team" | "workflow" | "prompts" | "knowledge" | "assets" | "docs" | "rules" | "activity"
 
 const tabs: readonly { readonly id: DetailTab; readonly label: string }[] = [
   { id: "overview", label: "Overview" },
@@ -18,6 +20,7 @@ const tabs: readonly { readonly id: DetailTab; readonly label: string }[] = [
   { id: "prompts", label: "Prompts" },
   { id: "knowledge", label: "Knowledge" },
   { id: "assets", label: "Assets" },
+  { id: "docs", label: "Docs" },
   { id: "rules", label: "Rules" },
   { id: "activity", label: "Activity" }
 ]
@@ -35,7 +38,10 @@ export function ProjectDetailView({
   onCopyPrompt,
   onToggleStep,
   onToggleWorkflowStep,
-  onDeleteStep
+  onDeleteStep,
+  onDeleteDocument,
+  onFeedback,
+  initialTab
 }: {
   readonly project: Project
   readonly prompts: readonly Prompt[]
@@ -50,8 +56,11 @@ export function ProjectDetailView({
   readonly onToggleStep: (projectId: string, stepId: string) => void
   readonly onToggleWorkflowStep: (workflowId: string, stepId: string) => void
   readonly onDeleteStep: (projectId: string, stepId: string) => void
+  readonly onDeleteDocument: (projectId: string, documentId: string) => void
+  readonly onFeedback: (message: string) => void
+  readonly initialTab?: string | undefined
 }) {
-  const [tab, setTab] = useState<DetailTab>("overview")
+  const [tab, setTab] = useState<DetailTab>(readDetailTab(initialTab))
   const linkedPrompts = prompts.filter((prompt) => project.promptIds.includes(prompt.id) || prompt.projectIds.includes(project.id))
   const linkedWorkflows = workflows.filter((workflow) => project.workflowIds.includes(workflow.id) || workflow.projectIds.includes(project.id))
   const linkedKnowledge = knowledge.filter((item) => project.knowledgeIds.includes(item.id) || item.projectIds.includes(project.id))
@@ -59,19 +68,19 @@ export function ProjectDetailView({
   const projectActivities = activities.filter((activity) => activity.projectId === project.id || activity.entityId === project.id)
 
   return (
-    <div className="grid gap-5">
+    <div className="grid w-full max-w-[calc(100vw-2rem)] min-w-0 gap-5 overflow-x-hidden sm:max-w-full">
       <button type="button" onClick={onBack} className="w-fit rounded-lg px-2 py-1 text-sm text-slate-400 hover:bg-white/[0.06] hover:text-white">
         프로젝트 목록으로
       </button>
-      <Card className="p-5">
+      <Card className="max-w-full overflow-hidden p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
+          <div className="min-w-0 max-w-3xl">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-mint-300/20 px-2 py-1 text-xs text-mint-300">{project.status}</span>
               <span className="rounded-full border border-white/10 px-2 py-1 text-xs text-slate-300">{project.category}</span>
             </div>
             <h1 className="text-3xl font-semibold leading-tight text-white">{project.title}</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-300">{project.description}</p>
+            <p className="mt-3 max-w-[300px] break-words text-sm leading-6 text-slate-300 sm:max-w-none">{project.description}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button onClick={() => onToggleFavorite(project.id)}><Heart className="h-4 w-4" fill={project.isFavorite ? "currentColor" : "none"} />즐겨찾기</Button>
@@ -86,7 +95,7 @@ export function ProjectDetailView({
         </div>
       </Card>
 
-      <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/[0.035] p-1">
+      <div className="max-w-full min-w-0 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.035] p-1">
         <div className="flex min-w-max gap-1">
           {tabs.map((item) => (
             <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`rounded-lg px-3 py-2 text-sm transition ${tab === item.id ? "bg-white/[0.09] text-mint-300" : "text-slate-400 hover:bg-white/[0.05] hover:text-white"}`}>
@@ -103,10 +112,29 @@ export function ProjectDetailView({
       {tab === "prompts" ? <PromptPanel prompts={linkedPrompts} onCopy={onCopyPrompt} /> : null}
       {tab === "knowledge" ? <KnowledgePanel knowledge={linkedKnowledge} /> : null}
       {tab === "assets" ? <AssetPanel assets={linkedAssets} /> : null}
+      {tab === "docs" ? <DocsPanel project={project} onEdit={onEdit} onDelete={onDeleteDocument} onFeedback={onFeedback} /> : null}
       {tab === "rules" ? <RulesPanel project={project} onAdd={() => onEdit({ kind: "rule", projectId: project.id })} /> : null}
       {tab === "activity" ? <ActivityPanel activities={projectActivities} /> : null}
     </div>
   )
+}
+
+function readDetailTab(value: string | undefined): DetailTab {
+  switch (value) {
+    case "overview":
+    case "next":
+    case "team":
+    case "workflow":
+    case "prompts":
+    case "knowledge":
+    case "assets":
+    case "docs":
+    case "rules":
+    case "activity":
+      return value
+    default:
+      return "overview"
+  }
 }
 
 function Overview({ project }: { readonly project: Project }) {
@@ -205,24 +233,24 @@ function PromptPanel({ prompts, onCopy }: { readonly prompts: readonly Prompt[];
 }
 
 function KnowledgePanel({ knowledge }: { readonly knowledge: readonly KnowledgeItem[] }) {
-  return <CardList items={knowledge.map((item) => ({ id: item.id, title: item.title, meta: item.type, text: item.summary }))} />
+  return <ProjectMiniCards items={knowledge.map((item) => ({ id: item.id, title: item.title, meta: item.type, text: item.summary }))} />
 }
 
 function AssetPanel({ assets }: { readonly assets: readonly Asset[] }) {
-  return <CardList items={assets.map((asset) => ({ id: asset.id, title: asset.title, meta: asset.type, text: asset.description, url: asset.url }))} />
+  return <ProjectMiniCards items={assets.map((asset) => ({ id: asset.id, title: asset.title, meta: asset.type, text: asset.description, url: asset.url }))} />
 }
 
 function RulesPanel({ project, onAdd }: { readonly project: Project; readonly onAdd: () => void }) {
   return (
     <Card className="p-4">
       <SectionTitle title="작업 규칙" action={<Button variant="primary" onClick={onAdd}><Plus className="h-4 w-4" />규칙 추가</Button>} />
-      <CardList items={project.rules.map((rule) => ({ id: rule.id, title: rule.title, meta: rule.category, text: rule.description }))} bare />
+      <ProjectMiniCards items={project.rules.map((rule) => ({ id: rule.id, title: rule.title, meta: rule.category, text: rule.description }))} bare />
     </Card>
   )
 }
 
 function ActivityPanel({ activities }: { readonly activities: readonly Activity[] }) {
-  return <CardList items={activities.map((activity) => ({ id: activity.id, title: activity.title, meta: formatShortDate(activity.createdAt), text: activity.description }))} />
+  return <ProjectMiniCards items={activities.map((activity) => ({ id: activity.id, title: activity.title, meta: formatShortDate(activity.createdAt), text: activity.description }))} />
 }
 
 function InfoBlock({ label, value }: { readonly label: string; readonly value: string }) {
@@ -231,22 +259,4 @@ function InfoBlock({ label, value }: { readonly label: string; readonly value: s
 
 function ListBlock({ title, items }: { readonly title: string; readonly items: readonly string[] }) {
   return <Card className="p-4"><p className="text-xs font-semibold text-mint-300">{title}</p><div className="mt-3 flex flex-wrap gap-2">{items.map((item) => <span key={item} className="rounded-full border border-white/10 px-2 py-1 text-xs text-slate-300">{item}</span>)}</div></Card>
-}
-
-type CardItem = { readonly id: string; readonly title: string; readonly meta: string; readonly text: string; readonly url?: string }
-
-function CardList({ items, bare = false }: { readonly items: readonly CardItem[]; readonly bare?: boolean }) {
-  const content = (
-    <div className="grid gap-3 md:grid-cols-2">
-      {items.map((item) => (
-        <div key={item.id} className="rounded-xl bg-white/[0.035] p-4">
-          <p className="text-xs text-mint-300">{item.meta}</p>
-          <p className="mt-1 font-semibold text-white">{item.title}</p>
-          <p className="mt-2 text-sm leading-6 text-slate-400">{item.text}</p>
-          {item.url ? <a href={item.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm text-mint-300"><ExternalLink className="h-4 w-4" />링크 열기</a> : null}
-        </div>
-      ))}
-    </div>
-  )
-  return bare ? content : <Card className="p-4">{content}</Card>
 }

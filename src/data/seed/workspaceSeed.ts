@@ -3,6 +3,120 @@ import type { WorkspaceData } from "@/types/models"
 const createdAt = "2026-07-01T09:00:00.000Z"
 const updatedAt = "2026-07-13T08:30:00.000Z"
 
+function projectDocs(projectTitle: string, includeFullSet: boolean) {
+  const baseDocs = [
+    {
+      id: `doc-${projectTitle}-readme`,
+      title: `${projectTitle} README`,
+      fileName: "README.md",
+      documentType: "README" as const,
+      purpose: "프로젝트 소개와 실행 방법을 빠르게 공유합니다.",
+      content: `# ${projectTitle}\n\n## 소개\n${projectTitle}의 목적, 사용자, 현재 상태를 정리합니다.\n\n## 주요 기능\n- 프로젝트 맥락 관리\n- 작업 자료 연결\n- 다음 작업 추적\n\n## 실행 메모\n현재 MVP에서는 민감정보 없이 샘플 맥락만 저장합니다.`,
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: `doc-${projectTitle}-next`,
+      title: `${projectTitle} NEXT`,
+      fileName: "NEXT.md",
+      documentType: "NEXT" as const,
+      purpose: "다음 작업과 우선순위를 AI에게 전달합니다.",
+      content: `# NEXT\n\n## 지금 이어갈 일\n- 가장 중요한 다음 작업을 확인합니다.\n- 완료 기준을 먼저 고정합니다.\n- 작업 후 검증 결과를 남깁니다.`,
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: `doc-${projectTitle}-security`,
+      title: `${projectTitle} SECURITY`,
+      fileName: "SECURITY.md",
+      documentType: "SECURITY" as const,
+      purpose: "개인정보와 민감정보 처리 기준을 기록합니다.",
+      content: `# SECURITY\n\n## 원칙\n- 실제 학생 이름, 학번, 건강 정보는 저장하지 않습니다.\n- 공개 가능한 샘플 데이터만 사용합니다.\n- 외부 공유 전 민감정보 포함 여부를 확인합니다.`,
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    }
+  ]
+
+  if (!includeFullSet) {
+    return baseDocs
+  }
+
+  return [
+    ...baseDocs,
+    {
+      id: "doc-harness-project",
+      title: "Harness Studio PROJECT",
+      fileName: "PROJECT.md",
+      documentType: "PROJECT" as const,
+      purpose: "제품 정의와 MVP 범위를 고정합니다.",
+      content:
+        "# PROJECT\n\nHarness Studio는 사용자의 AI 작업 방식을 프로젝트별 자산으로 축적하는 개인 작업실입니다.\n\n## MVP\nProject Harness, Prompt Library, Workflow Library, Knowledge, Assets, Docs, 검색, 즐겨찾기, localStorage 저장을 포함합니다.",
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: "doc-harness-architecture",
+      title: "Harness Studio ARCHITECTURE",
+      fileName: "ARCHITECTURE.md",
+      documentType: "ARCHITECTURE" as const,
+      purpose: "UI와 데이터 계층 구조를 설명합니다.",
+      content:
+        "# ARCHITECTURE\n\n## 구조\n- Feature UI\n- Repository 계층\n- localStorage 저장소\n- Seed 데이터\n\nUI는 localStorage를 직접 호출하지 않고 Repository를 통해 데이터에 접근합니다.",
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: "doc-harness-codex",
+      title: "Harness Studio CODEX",
+      fileName: "CODEX.md",
+      documentType: "CODEX" as const,
+      purpose: "Codex가 작업을 시작할 때 지켜야 할 실행 원칙입니다.",
+      content:
+        "# CODEX\n\n## 작업 방식\n- 분석에서 멈추지 말고 구현, 검증, 문서화까지 진행합니다.\n- 기존 변경사항을 되돌리지 않습니다.\n- lint와 build를 통과시킨 뒤 결과를 보고합니다.",
+      version: "1.0.0",
+      includeInAiContext: true,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: "doc-harness-data-model",
+      title: "Harness Studio DATA MODEL",
+      fileName: "DATA_MODEL.md",
+      documentType: "DATA_MODEL" as const,
+      purpose: "핵심 타입과 저장 구조를 설명합니다.",
+      content:
+        "# DATA_MODEL\n\nProject는 Prompt, Workflow, Knowledge, Asset, Rule, Next Step, Activity, Docs를 연결합니다.\n\nDocs는 Markdown content와 includeInAiContext 플래그를 가집니다.",
+      version: "1.0.0",
+      includeInAiContext: false,
+      createdAt,
+      updatedAt
+    },
+    {
+      id: "doc-harness-roadmap",
+      title: "Harness Studio ROADMAP",
+      fileName: "ROADMAP.md",
+      documentType: "ROADMAP" as const,
+      purpose: "다음 버전 계획을 정리합니다.",
+      content:
+        "# ROADMAP\n\n## v0.2\nProject Harness 강화, Markdown Editor\n\n## v0.3\nSupabase, 로그인, 클라우드 동기화\n\n## v0.4\nAI API 연동, 대화에서 Harness 생성",
+      version: "1.0.0",
+      includeInAiContext: false,
+      createdAt,
+      updatedAt
+    }
+  ]
+}
+
 export const seedWorkspaceData: WorkspaceData = {
   settings: {
     id: "settings-sookang",
@@ -113,7 +227,8 @@ export const seedWorkspaceData: WorkspaceData = {
           createdAt,
           updatedAt
         }
-      ]
+      ],
+      docs: projectDocs("Harness Studio", true)
     },
     {
       id: "project-online-health-room",
@@ -151,7 +266,8 @@ export const seedWorkspaceData: WorkspaceData = {
         }
       ],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("온라인 보건실", false)
     },
     {
       id: "project-health-checkup",
@@ -179,7 +295,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("학생 건강검진 운영 시스템", false)
     },
     {
       id: "project-school-health-hub",
@@ -207,7 +324,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("School Health Hub", false)
     },
     {
       id: "project-ebook-studio",
@@ -235,7 +353,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("eBook Studio", false)
     },
     {
       id: "project-together-travel",
@@ -263,7 +382,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("Together Travel", false)
     },
     {
       id: "project-ai-teacher-training",
@@ -291,7 +411,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("AI 교사 연수", false)
     },
     {
       id: "project-private-school-ebook",
@@ -319,7 +440,8 @@ export const seedWorkspaceData: WorkspaceData = {
       links: {},
       nextSteps: [],
       aiTeam: [],
-      rules: []
+      rules: [],
+      docs: projectDocs("사립학교 보건교사 전자책", false)
     }
   ],
   prompts: [

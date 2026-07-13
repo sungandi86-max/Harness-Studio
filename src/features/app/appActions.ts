@@ -1,6 +1,7 @@
 import { assetRepository } from "@/lib/repositories/assetRepository"
 import { knowledgeRepository } from "@/lib/repositories/knowledgeRepository"
 import { projectRepository } from "@/lib/repositories/projectRepository"
+import { projectDocumentRepository } from "@/lib/repositories/projectDocumentRepository"
 import { promptRepository } from "@/lib/repositories/promptRepository"
 import { workflowRepository } from "@/lib/repositories/workflowRepository"
 import type { SubmitPayload } from "@/features/editor/editorTypes"
@@ -30,6 +31,10 @@ export function savePayload(payload: SubmitPayload): boolean {
       if (payload.id === undefined) assetRepository.create(payload.values)
       else assetRepository.update(payload.id, payload.values)
       return true
+    case "document":
+      if (payload.id === undefined) projectDocumentRepository.add(payload.projectId, payload.values)
+      else projectDocumentRepository.update(payload.projectId, payload.id, payload.values)
+      return true
     case "nextStep":
       projectRepository.addNextStep(payload.projectId, payload.title)
       return true
@@ -50,6 +55,13 @@ export function validatePayload(payload: SubmitPayload): boolean {
     case "knowledge":
     case "asset":
       return payload.values.title.trim().length > 0 && urlFieldsAreValid(payload)
+    case "document":
+      return (
+        payload.values.title.trim().length > 0 &&
+        payload.values.fileName.trim().length > 0 &&
+        payload.values.purpose.trim().length > 0 &&
+        payload.values.content.trim().length > 0
+      )
     case "nextStep":
       return payload.title.trim().length > 0
     case "aiTeam":

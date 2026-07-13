@@ -47,6 +47,7 @@ function emptyProject(input: ProjectInput): Project {
     knowledgeIds: [],
     assetIds: [],
     rules: [],
+    docs: [],
     links: {
       github: input.githubUrl.length > 0 ? input.githubUrl : undefined,
       deployment: input.deploymentUrl.length > 0 ? input.deploymentUrl : undefined

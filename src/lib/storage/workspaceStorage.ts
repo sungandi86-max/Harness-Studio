@@ -1,5 +1,5 @@
 import { seedWorkspaceData } from "@/data/seed/workspaceSeed"
-import type { WorkspaceData } from "@/types/models"
+import type { Project, WorkspaceData } from "@/types/models"
 import { parseWorkspaceJson } from "./validation"
 
 export const WORKSPACE_STORAGE_KEY = "harness-studio.workspace.v1"
@@ -19,7 +19,11 @@ export function loadWorkspace(): WorkspaceData {
     return seedWorkspaceData
   }
 
-  return parseWorkspaceJson(raw) ?? seedWorkspaceData
+  const parsed = parseWorkspaceJson(raw)
+  if (parsed === null) {
+    return seedWorkspaceData
+  }
+  return normalizeWorkspace(parsed)
 }
 
 export function saveWorkspace(data: WorkspaceData): WorkspaceData {
@@ -51,4 +55,18 @@ export function clearWorkspace(): WorkspaceData {
     assets: [],
     activities: []
   })
+}
+
+function normalizeWorkspace(data: WorkspaceData): WorkspaceData {
+  return {
+    ...data,
+    projects: data.projects.map((project) => normalizeProject(project))
+  }
+}
+
+function normalizeProject(project: Project): Project {
+  return {
+    ...project,
+    docs: project.docs ?? []
+  }
 }

@@ -1,7 +1,8 @@
-export type EntityKind = "project" | "prompt" | "workflow" | "knowledge" | "asset"
+export type EntityKind = "project" | "prompt" | "workflow" | "knowledge" | "asset" | "document"
 
 export type ProjectStatus = "idea" | "active" | "paused" | "completed" | "archived"
 export type Priority = "low" | "medium" | "high"
+export type DocumentType = "README" | "PROJECT" | "ARCHITECTURE" | "CODEX" | "NEXT" | "SECURITY" | "DATA_MODEL" | "ROADMAP" | "CUSTOM"
 export type KnowledgeType = "note" | "decision" | "lesson" | "error" | "tip" | "reference" | "snippet"
 export type AssetType = "image" | "document" | "pdf" | "link" | "brand" | "character" | "reference" | "code"
 export type ActivityType =
@@ -45,6 +46,16 @@ export type ProjectRule = BaseEntity & {
   readonly category: string
 }
 
+export type ProjectDocument = BaseEntity & {
+  readonly title: string
+  readonly fileName: string
+  readonly documentType: DocumentType
+  readonly purpose: string
+  readonly content: string
+  readonly version: string
+  readonly includeInAiContext: boolean
+}
+
 export type Project = BaseEntity & {
   readonly title: string
   readonly summary: string
@@ -67,6 +78,7 @@ export type Project = BaseEntity & {
   readonly knowledgeIds: readonly string[]
   readonly assetIds: readonly string[]
   readonly rules: readonly ProjectRule[]
+  readonly docs: readonly ProjectDocument[]
   readonly links: ProjectLinks
   readonly isFavorite: boolean
 }

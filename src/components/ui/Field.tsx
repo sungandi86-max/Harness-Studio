@@ -19,10 +19,10 @@ export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
   )
 }
 
-export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+export function TextArea({ className = "", ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea
-      className="min-h-24 rounded-lg border border-white/10 bg-white/[0.045] px-3 py-2 text-sm leading-6 text-white placeholder:text-slate-500"
+      className={`min-h-24 rounded-lg border border-white/10 bg-white/[0.045] px-3 py-2 text-sm leading-6 text-white placeholder:text-slate-500 ${className}`}
       {...props}
     />
   )

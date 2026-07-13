@@ -9,3 +9,4 @@ export type EditorMode =
   | { readonly kind: "nextStep"; readonly projectId: string }
   | { readonly kind: "aiTeam"; readonly projectId: string }
   | { readonly kind: "rule"; readonly projectId: string }
+  | { readonly kind: "document"; readonly projectId: string; readonly id?: string }

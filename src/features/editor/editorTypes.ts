@@ -1,4 +1,4 @@
-import type { Asset, KnowledgeItem, Project, Prompt, Workflow } from "@/types/models"
+import type { Asset, DocumentType, KnowledgeItem, Project, Prompt, Workflow } from "@/types/models"
 
 export type ProjectFormValues = {
   readonly title: string
@@ -60,12 +60,28 @@ export type AssetFormValues = {
   readonly tags: readonly string[]
 }
 
+export type DocumentFormValues = {
+  readonly title: string
+  readonly fileName: string
+  readonly documentType: DocumentType
+  readonly purpose: string
+  readonly content: string
+  readonly version: string
+  readonly includeInAiContext: boolean
+}
+
 export type SubmitPayload =
   | { readonly kind: "project"; readonly values: ProjectFormValues; readonly id: string | undefined }
   | { readonly kind: "prompt"; readonly values: PromptFormValues; readonly id: string | undefined }
   | { readonly kind: "workflow"; readonly values: WorkflowFormValues; readonly id: string | undefined }
   | { readonly kind: "knowledge"; readonly values: KnowledgeFormValues; readonly id: string | undefined }
   | { readonly kind: "asset"; readonly values: AssetFormValues; readonly id: string | undefined }
+  | {
+      readonly kind: "document"
+      readonly projectId: string
+      readonly id: string | undefined
+      readonly values: DocumentFormValues
+    }
   | { readonly kind: "nextStep"; readonly projectId: string; readonly title: string }
   | {
       readonly kind: "aiTeam"
@@ -82,4 +98,5 @@ export type EditorDefaults = {
   readonly workflow: Workflow | undefined
   readonly knowledge: KnowledgeItem | undefined
   readonly asset: Asset | undefined
+  readonly document: Project["docs"][number] | undefined
 }

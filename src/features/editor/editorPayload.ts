@@ -3,6 +3,7 @@ import type { EditorMode } from "@/features/app/types"
 import type { Asset, KnowledgeItem, Project } from "@/types/models"
 import type {
   AssetFormValues,
+  DocumentFormValues,
   KnowledgeFormValues,
   ProjectFormValues,
   PromptFormValues,
@@ -22,6 +23,13 @@ export function payloadFromForm(mode: EditorMode, formData: FormData): SubmitPay
       return { kind: "knowledge", id: mode.id, values: knowledgeValues(formData) }
     case "asset":
       return { kind: "asset", id: mode.id, values: assetValues(formData) }
+    case "document":
+      return {
+        kind: "document",
+        projectId: mode.projectId,
+        id: mode.id,
+        values: documentValues(formData)
+      }
     case "nextStep":
       return { kind: "nextStep", projectId: mode.projectId, title: textValue(formData, "title") }
     case "aiTeam":
@@ -118,6 +126,18 @@ function assetValues(formData: FormData): AssetFormValues {
   }
 }
 
+function documentValues(formData: FormData): DocumentFormValues {
+  return {
+    title: textValue(formData, "title"),
+    fileName: textValue(formData, "fileName"),
+    documentType: readDocumentType(textValue(formData, "documentType")),
+    purpose: textValue(formData, "purpose"),
+    content: textValue(formData, "content"),
+    version: textValue(formData, "version") || "1.0.0",
+    includeInAiContext: formData.get("includeInAiContext") === "on"
+  }
+}
+
 function readProjectStatus(value: string): Project["status"] {
   switch (value) {
     case "idea":
@@ -159,5 +179,22 @@ function readAssetType(value: string): Asset["type"] {
       return value
     default:
       return "link"
+  }
+}
+
+function readDocumentType(value: string): DocumentFormValues["documentType"] {
+  switch (value) {
+    case "README":
+    case "PROJECT":
+    case "ARCHITECTURE":
+    case "CODEX":
+    case "NEXT":
+    case "SECURITY":
+    case "DATA_MODEL":
+    case "ROADMAP":
+    case "CUSTOM":
+      return value
+    default:
+      return "CUSTOM"
   }
 }

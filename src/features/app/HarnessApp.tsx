@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { assetRepository } from "@/lib/repositories/assetRepository"
 import { knowledgeRepository } from "@/lib/repositories/knowledgeRepository"
 import { projectRepository } from "@/lib/repositories/projectRepository"
+import { projectDocumentRepository } from "@/lib/repositories/projectDocumentRepository"
 import { promptRepository } from "@/lib/repositories/promptRepository"
 import { settingsRepository } from "@/lib/repositories/settingsRepository"
 import { workflowRepository } from "@/lib/repositories/workflowRepository"
@@ -21,10 +22,18 @@ import { AppShell } from "./AppShell"
 import { savePayload } from "./appActions"
 import type { AppView, EditorMode } from "./types"
 
-export function HarnessApp({ initialView }: { readonly initialView: AppView }) {
+export function HarnessApp({
+  initialView,
+  initialProjectId = "project-harness-studio",
+  initialProjectTab
+}: {
+  readonly initialView: AppView
+  readonly initialProjectId?: string | undefined
+  readonly initialProjectTab?: string | undefined
+}) {
   const [data, setData] = useState<WorkspaceData>(() => loadWorkspace())
   const [view, setView] = useState<AppView>(initialView)
-  const [selectedProjectId, setSelectedProjectId] = useState("project-harness-studio")
+  const [selectedProjectId, setSelectedProjectId] = useState(initialProjectId)
   const [editorMode, setEditorMode] = useState<EditorMode | null>(null)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [toast, setToast] = useState("저장됨")
@@ -162,6 +171,14 @@ export function HarnessApp({ initialView }: { readonly initialView: AppView }) {
         projectRepository.deleteNextStep(projectId, stepId)
         refresh("삭제됨")
       }}
+      onDeleteDocument={(projectId, documentId) => {
+        if (window.confirm("문서를 삭제할까요?")) {
+          projectDocumentRepository.delete(projectId, documentId)
+          refresh("문서 삭제됨")
+        }
+      }}
+      onFeedback={(message) => setToast(message)}
+      initialTab={initialProjectTab}
     />
   ) : (
     renderView(view)

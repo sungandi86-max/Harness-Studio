@@ -4,6 +4,7 @@
 
 - Workspace Home
 - Project Harness detail
+- Project Docs and AI start context
 - Prompt, Workflow, Knowledge, Asset libraries
 - Integrated search
 - Favorites
